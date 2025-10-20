@@ -1,20 +1,4 @@
-customerForm: {
-          title: "Customer Onboarding Form",
-          type: "process",
-          details: "Customer completes onboarding form with critical data",
-          status: "current",
-          subSteps: [
-            "Customer receives onboarding form email",
-            "Fills vehicle rego (required)",
-            "Fills escalation contacts: name + phone (minimum required)",
-            "Submits form"
-          ],
-          dependencies: ["Form email sent by EROAD"],
-          currentState: "If incomplete → Welfare First manually reaches out to customer or Sales Ops",
-          idealState: "Form validation with mandatory field checks before submission (prevents incomplete submissions)",
-          gap: "No automated validation - customer can submit incomplete forms",
-          blocking: "Cannot proceed without: Vehicle rego, Escalation contact name, Phone number"
-        },<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -840,3 +824,4 @@ customerForm: {
   </script>
 </body>
 </html>
+
