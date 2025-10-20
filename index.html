@@ -141,11 +141,11 @@
           details: "Welfare First integrates API and verifies vehicle data",
           status: "current",
           subSteps: [
-            "Add API keys to Welfare First system",
+            "Welfare First adds API keys to their system",
             "Instant verification: Vehicles appear on dashboard",
             "If error → API keys incorrect or vault link expired"
           ],
-          dependencies: ["API keys retrieved", "Enterprise account created"],
+          dependencies: ["Welfare First account created", "API keys retrieved from vault"],
           currentState: "✅ Instant feedback on success/failure",
           idealState: "Same - works well. Automated notification to Sales Ops if integration fails",
           failures: [
@@ -166,8 +166,8 @@
           ],
           dependencies: ["Form email sent by EROAD"],
           currentState: "If incomplete → Welfare First manually reaches out to customer or Sales Ops",
-          idealState: "Form validation with mandatory field checks before submission",
-          gap: "No automated validation or follow-up for incomplete forms",
+          idealState: "Form validation with mandatory field checks before submission (prevents incomplete submissions)",
+          gap: "No automated validation - customer can submit incomplete forms",
           blocking: "Cannot proceed without: Vehicle rego, Escalation contact name, Phone number"
         },
         wfSetup: {
@@ -176,8 +176,8 @@
           details: "Manual setup process tracked in Excel",
           status: "warning",
           subSteps: [
-            "Create Enterprise Account in WF system",
-            "Add & verify API keys → Vehicles appear",
+            "Create Enterprise Account in WF system (MUST BE DONE FIRST)",
+            "Add API keys from vault",
             "Map vehicles from customer form",
             "Add escalation contacts",
             "Update Excel tracker with status"
@@ -188,7 +188,7 @@
             "myEROAD Logins", 
             "WF Monitoring Status: Live"
           ],
-          dependencies: ["MyEROAD access", "API keys verified", "Customer form completed"],
+          dependencies: ["MyEROAD access", "API keys retrieved", "Customer form completed"],
           currentState: "⚠️ Manual Excel tracking, no automated workflow",
           idealState: "Automated status tracking with real-time dashboard showing completion %",
           gap: "No centralized onboarding management tool"
@@ -482,52 +482,55 @@
               <FlowNode id="apiVault" title="API Key Retrieval" status="current" x={centerX - 120} y={270} />
               <FlowNode id="customerForm" title="Customer Onboarding Form" status="current" x={rightX} y={270} />
               
-              {/* Convergence lines */}
-              <VerticalLine x={leftX + 120} y1={350} y2={380} dashed={true} color="amber" />
-              <VerticalLine x={centerX} y1={350} y2={420} />
-              <VerticalLine x={rightX + 120} y1={350} y2={380} dashed={true} color="amber" />
-              <HorizontalLine x1={leftX + 120} x2={rightX + 120} y={380} dashed={true} color="amber" />
-              <VerticalLine x={centerX} y1={380} y2={420} dashed={true} color="amber" />
-              <Arrow x={centerX} y={420} color="amber" />
+              {/* Lines to WF Setup */}
+              <VerticalLine x={leftX + 120} y1={350} y2={410} dashed={true} color="amber" />
+              <VerticalLine x={centerX} y1={350} y2={410} dashed={true} color="amber" />
+              <VerticalLine x={rightX + 120} y1={350} y2={410} dashed={true} color="amber" />
+              <HorizontalLine x1={leftX + 120} x2={rightX + 120} y={410} dashed={true} color="amber" />
+              <VerticalLine x={centerX} y1={410} y2={450} dashed={true} color="amber" />
+              <Arrow x={centerX} y={450} color="amber" />
               
-              <FlowNode id="apiIntegration" title="API Integration & Verification" status="current" x={centerX - 120} y={430} />
+              <FlowNode id="wfSetup" title="Welfare First Setup (Excel Tracking)" status="warning" x={centerX - 120} y={460} />
               
-              <VerticalLine x={centerX} y1={510} y2={550} />
-              <Arrow x={centerX} y={550} />
+              <VerticalLine x={centerX} y1={540} y2={580} />
+              <Arrow x={centerX} y={580} />
               
-              <FlowNode id="wfSetup" title="Welfare First Setup (Excel Tracking)" status="warning" x={centerX - 120} y={560} />
+              <FlowNode id="apiIntegration" title="API Integration & Verification" status="current" x={centerX - 120} y={590} />
+              <FlowNode id="apiIntegration" title="API Integration & Verification" status="current" x={centerX - 120} y={590} />
               
-              <VerticalLine x={centerX} y1={640} y2={680} color="amber" />
-              <Arrow x={centerX} y={680} color="amber" />
+              <VerticalLine x={centerX} y1={670} y2={710} />
+              <Arrow x={centerX} y={710} />
               
-              <FlowNode id="wfLiveEmail" title="WF Notifies 'Live' to Sales Ops" status="warning" x={centerX - 120} y={690} />
+              <FlowNode id="wfLiveEmail" title="WF Notifies 'Live' to Sales Ops" status="warning" x={centerX - 120} y={720} />
+              <FlowNode id="wfLiveEmail" title="WF Notifies 'Live' to Sales Ops" status="warning" x={centerX - 120} y={720} />
               
-              <VerticalLine x={centerX} y1={770} y2={810} color="rose" dashed={true} />
-              <Arrow x={centerX} y={810} color="rose" />
+              <VerticalLine x={centerX} y1={800} y2={840} color="rose" dashed={true} />
+              <Arrow x={centerX} y={840} color="rose" />
               
-              <FlowNode id="monitoringActivation" title="🚨 Monitoring Activation (Customer)" status="critical-gap" x={centerX - 120} y={820} width={280} />
+              <FlowNode id="monitoringActivation" title="🚨 Monitoring Activation (Customer)" status="critical-gap" x={centerX - 120} y={850} width={240} />
+              <FlowNode id="monitoringActivation" title="🚨 Monitoring Activation (Customer)" status="critical-gap" x={centerX - 120} y={850} width={240} />
               
-              <VerticalLine x={centerX} y1={900} y2={940} color="rose" dashed={true} />
-              <Arrow x={centerX} y={940} color="rose" />
+              <VerticalLine x={centerX} y1={930} y2={970} color="rose" dashed={true} />
+              <Arrow x={centerX} y={970} color="rose" />
               
-              <FlowNode id="monitoring" title="Active Monitoring" status="current" x={centerX - 120} y={950} />
+              <FlowNode id="monitoring" title="Active Monitoring" status="current" x={centerX - 120} y={980} />
               
-              <VerticalLine x={centerX} y1={1030} y2={1070} />
-              <Arrow x={centerX} y={1070} />
+              <VerticalLine x={centerX} y1={1060} y2={1100} />
+              <Arrow x={centerX} y={1100} />
               
-              <FlowNode id="offboardRequest" title="Offboarding Request" status="current" x={centerX - 120} y={1080} />
+              <FlowNode id="offboardRequest" title="Offboarding Request" status="current" x={centerX - 120} y={1110} />
               
-              <VerticalLine x={centerX} y1={1160} y2={1200} color="rose" />
-              <Arrow x={centerX} y={1200} color="rose" />
+              <VerticalLine x={centerX} y1={1190} y2={1230} color="rose" />
+              <Arrow x={centerX} y={1230} color="rose" />
               
-              <FlowNode id="wfOffboard" title="Welfare First Offboards" status="critical-gap" x={centerX - 120} y={1210} />
+              <FlowNode id="wfOffboard" title="Welfare First Offboards" status="critical-gap" x={centerX - 120} y={1240} />
               
-              <VerticalLine x={centerX} y1={1290} y2={1320} color="rose" />
-              <HorizontalLine x1={centerX} x2={rightX + 60} y={1320} color="rose" />
-              <VerticalLine x={rightX + 60} y1={1320} y2={1360} color="rose" />
-              <Arrow x={rightX + 60} y={1360} color="rose" />
+              <VerticalLine x={centerX} y1={1320} y2={1350} color="rose" />
+              <HorizontalLine x1={centerX} x2={rightX + 60} y={1350} color="rose" />
+              <VerticalLine x={rightX + 60} y1={1350} y2={1390} color="rose" />
+              <Arrow x={rightX + 60} y={1390} color="rose" />
               
-              <FlowNode id="billingMisalignment" title="🚨 Billing Misalignment" status="critical-gap" x={rightX - 60} y={1370} width={280} />
+              <FlowNode id="billingMisalignment" title="🚨 Billing Misalignment" status="critical-gap" x={rightX - 60} y={1400} width={240} />
 
             </div>
           </div>
@@ -861,4 +864,3 @@
   </script>
 </body>
 </html>
-
