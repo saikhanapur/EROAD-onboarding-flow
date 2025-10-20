@@ -1,4 +1,20 @@
-<!DOCTYPE html>
+customerForm: {
+          title: "Customer Onboarding Form",
+          type: "process",
+          details: "Customer completes onboarding form with critical data",
+          status: "current",
+          subSteps: [
+            "Customer receives onboarding form email",
+            "Fills vehicle rego (required)",
+            "Fills escalation contacts: name + phone (minimum required)",
+            "Submits form"
+          ],
+          dependencies: ["Form email sent by EROAD"],
+          currentState: "If incomplete → Welfare First manually reaches out to customer or Sales Ops",
+          idealState: "Form validation with mandatory field checks before submission (prevents incomplete submissions)",
+          gap: "No automated validation - customer can submit incomplete forms",
+          blocking: "Cannot proceed without: Vehicle rego, Escalation contact name, Phone number"
+        },<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -135,63 +151,23 @@
           currentState: "Manual retrieval, manual error handling",
           idealState: "Automated key rotation alerts, extended vault link validity"
         },
-        apiIntegration: {
-          title: "API Integration & Verification",
-          type: "process",
-          details: "Welfare First integrates API and verifies vehicle data",
-          status: "current",
-          subSteps: [
-            "Welfare First adds API keys to their system",
-            "Instant verification: Vehicles appear on dashboard",
-            "If error → API keys incorrect or vault link expired"
-          ],
-          dependencies: ["Welfare First account created", "API keys retrieved from vault"],
-          currentState: "✅ Instant feedback on success/failure",
-          idealState: "Same - works well. Automated notification to Sales Ops if integration fails",
-          failures: [
-            "API Key Error: Immediate dashboard error → Contact Sales Ops",
-            "Expired Vault Link: Cannot retrieve keys → Contact Sales Ops"
-          ]
-        },
-        customerForm: {
-          title: "Customer Onboarding Form",
-          type: "process",
-          details: "Customer completes onboarding form with critical data",
-          status: "current",
-          subSteps: [
-            "Customer receives onboarding form email",
-            "Fills vehicle rego (required)",
-            "Fills escalation contacts: name + phone (minimum required)",
-            "Submits form"
-          ],
-          dependencies: ["Form email sent by EROAD"],
-          currentState: "If incomplete → Welfare First manually reaches out to customer or Sales Ops",
-          idealState: "Form validation with mandatory field checks before submission (prevents incomplete submissions)",
-          gap: "No automated validation - customer can submit incomplete forms",
-          blocking: "Cannot proceed without: Vehicle rego, Escalation contact name, Phone number"
-        },
         wfSetup: {
           title: "Welfare First Setup & Configuration",
           type: "process",
-          details: "Manual setup process tracked in Excel",
+          details: "Complete onboarding setup with API integration and vehicle mapping",
           status: "warning",
           subSteps: [
-            "Create Enterprise Account in WF system (MUST BE DONE FIRST)",
-            "Add API keys from vault",
-            "Map vehicles from customer form",
-            "Add escalation contacts",
-            "Update Excel tracker with status"
+            "1. Create Enterprise Account in WF system",
+            "2. Add API keys from vault",
+            "3. ✅ API Integration: Verify vehicles appear on dashboard",
+            "4. Map vehicles from customer form",
+            "5. Add escalation contacts (name + phone)",
+            "6. Mark customer as 'Ready for Monitoring'"
           ],
-          excelStatuses: [
-            "API key & Integration Status",
-            "Onboarding form",
-            "myEROAD Logins", 
-            "WF Monitoring Status: Live"
-          ],
-          dependencies: ["MyEROAD access", "API keys retrieved", "Customer form completed"],
-          currentState: "⚠️ Manual Excel tracking, no automated workflow",
-          idealState: "Automated status tracking with real-time dashboard showing completion %",
-          gap: "No centralized onboarding management tool"
+          dependencies: ["MyEROAD access confirmed", "API keys retrieved from vault", "Customer form completed"],
+          currentState: "⚠️ Manual process tracked in Excel spreadsheet, no automated workflow",
+          idealState: "Automated status tracking with real-time dashboard showing completion % for each step",
+          gap: "No centralized onboarding management tool - relies on manual Excel tracking"
         },
         wfLiveEmail: {
           title: "Welfare First Notifies 'Live'",
