@@ -12,7 +12,14 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.7); }
+    }
+    .api-highlight {
+      animation: pulse-glow 2.5s ease-in-out infinite;
     }
   </style>
 </head>
@@ -22,370 +29,351 @@
   <script type="text/babel">
     const { useState } = React;
     
-    // Lucide React Icons (inline SVG components)
+    // SVG Icons
     const Zap = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     );
     
     const CheckCircle = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     );
     
     const AlertCircle = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     );
     
     const XCircle = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     );
     
     const Info = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     );
     
     const Eye = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
       </svg>
     );
     
     const EyeOff = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
       </svg>
     );
     
     const ChevronRight = ({ className }) => (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     );
+    
+    const Database = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+      </svg>
+    );
 
-    const OnboardingFlowchart = () => {
+    const App = () => {
       const [selectedNode, setSelectedNode] = useState(null);
       const [showIdealState, setShowIdealState] = useState(false);
 
-      const nodeDetails = {
+      const nodeData = {
         signup: {
           title: "New Customer Signs Up",
-          type: "trigger",
-          details: "Sales Operations receives new customer signup (e.g., RNE Transport, BOOTHS LOGISTICS)",
+          details: "Sales Operations receives new customer signup",
           status: "trigger",
           dependencies: [],
           currentState: "Manual handoff to Sales Ops team",
-          idealState: "Automated workflow trigger with customer data"
+          idealState: "Automated workflow trigger"
         },
         parallel: {
           title: "EROAD Sales Ops - Parallel Actions",
-          type: "process",
-          details: "Three automated emails sent simultaneously:",
+          details: "Three automated emails sent simultaneously",
           status: "current",
           subSteps: [
-            "Email 1: MyEROAD username + temp password → Welfare First",
-            "Email 2: API vault link confirmation → Welfare First", 
+            "Email 1: MyEROAD credentials → Welfare First",
+            "Email 2: API vault link → Welfare First",
             "Email 3: Onboarding form → Customer"
           ],
-          dependencies: ["New customer signup"],
-          currentState: "All three emails triggered by Sales Ops",
+          dependencies: ["Customer signup"],
+          currentState: "All emails triggered by Sales Ops",
           idealState: "Same process, works well"
         },
         myeroad: {
           title: "MyEROAD Portal Access",
-          type: "process",
           details: "Welfare First receives credentials and accesses portal",
           status: "current",
           subSteps: [
-            "Receive automated email with username + temp password",
+            "Receive username + temp password",
             "Log into MyEROAD portal",
             "Reset password",
-            "Confirm access (assumed complete - no notification back to EROAD)"
+            "Access confirmed (no notification to EROAD)"
           ],
           dependencies: ["EROAD sends credentials"],
           currentState: "✅ Access assumed complete unless issue reported",
-          idealState: "⚠️ GAP: No confirmation loop. Ideal: Auto-confirmation to EROAD when first login successful",
+          idealState: "Auto-confirmation to EROAD when first login successful",
           gap: "No visibility on access completion"
         },
         apiVault: {
           title: "API Key Retrieval",
-          type: "process", 
           details: "Welfare First accesses secure vault for API keys",
           status: "current",
           subSteps: [
             "Receive vault link email",
-            "Access vault (link may expire ⚠️)",
+            "Access vault (link may expire)",
             "Retrieve API key + secret",
             "Store securely"
           ],
-          dependencies: ["API vault email received"],
+          dependencies: ["API vault email"],
           failures: [
-            "Vault link expired → Contact Sales Ops for new link",
-            "API keys incorrect → Error visible on WF dashboard → Request new keys"
+            "Vault link expired → Contact Sales Ops",
+            "API keys incorrect → Request new keys"
           ],
-          currentState: "Manual retrieval, manual error handling",
-          idealState: "Automated key rotation alerts, extended vault link validity"
+          currentState: "Manual retrieval and error handling",
+          idealState: "Extended vault validity, rotation alerts"
+        },
+        customerForm: {
+          title: "Customer Onboarding Form",
+          details: "Customer completes onboarding form with critical data",
+          status: "current",
+          subSteps: [
+            "Customer receives form email",
+            "Fills vehicle rego (required)",
+            "Fills escalation contacts (required)",
+            "Submits form"
+          ],
+          dependencies: ["Form email sent by EROAD"],
+          currentState: "If incomplete → WF manually reaches out",
+          idealState: "Mandatory field validation before submission",
+          gap: "Customer can submit incomplete forms",
+          blocking: "Cannot proceed without: Vehicle rego, Contact name, Phone"
         },
         wfSetup: {
           title: "Welfare First Setup & Configuration",
-          type: "process",
-          details: "Complete onboarding setup with API integration and vehicle mapping",
+          details: "Complete onboarding setup with API integration",
           status: "warning",
           subSteps: [
-            "1. Create Enterprise Account in WF system",
-            "2. Add API keys from vault",
-            "3. ✅ API Integration: Verify vehicles appear on dashboard",
-            "4. Map vehicles from customer form",
-            "5. Add escalation contacts (name + phone)",
-            "6. Mark customer as 'Ready for Monitoring'"
+            "Step 1: Create Enterprise Account",
+            "Step 2: Add API keys from vault",
+            "Step 3: 🔌 API Integration & Verification",
+            "Step 4: Map vehicles from form",
+            "Step 5: Add escalation contacts",
+            "Step 6: Mark 'Ready for Monitoring'"
           ],
-          dependencies: ["MyEROAD access confirmed", "API keys retrieved from vault", "Customer form completed"],
-          currentState: "⚠️ Manual process tracked in Excel spreadsheet, no automated workflow",
-          idealState: "Automated status tracking with real-time dashboard showing completion % for each step",
-          gap: "No centralized onboarding management tool - relies on manual Excel tracking"
+          apiDetails: {
+            desc: "Add API keys and verify vehicle data sync",
+            steps: [
+              "✅ API keys added to WF system",
+              "✅ Vehicles appear instantly",
+              "✅ Vehicle data verified"
+            ],
+            failures: [
+              "API Key Error → Contact Sales Ops",
+              "Expired Vault Link → Request new link"
+            ]
+          },
+          dependencies: ["MyEROAD access", "API keys", "Customer form"],
+          currentState: "Manual process tracked in spreadsheet",
+          idealState: "Automated status tracking with real-time dashboard",
+          gap: "No centralized onboarding management tool"
         },
-        wfLiveEmail: {
-          title: "Welfare First Notifies 'Live'",
-          type: "process",
-          details: "Welfare First emails Sales Ops confirming monitoring is ready",
+        wfLive: {
+          title: "WF Notifies 'Live'",
+          details: "Welfare First emails Sales Ops confirming ready",
           status: "warning",
           subSteps: [
             "All setup complete",
-            "Email Sales Ops: 'Welfare First is live with monitoring for [Customer]'",
-            "Sales Ops notifies customer (assumed - WF not copied)"
+            "Email Sales Ops: 'WF is live for [Customer]'",
+            "Sales Ops notifies customer (WF not copied)"
           ],
           dependencies: ["All WF setup complete"],
-          currentState: "⚠️ GAP: No visibility on what Sales Ops does next. Customer notification unclear.",
-          idealState: "Automated notification to Sales Ops + Customer with CC to WF for confirmation loop",
-          gap: "Communication breakdown - WF loses visibility after this point"
-        },
-        monitoringActivation: {
-          title: "🚨 CRITICAL GAP: Monitoring Activation",
-          type: "gap",
-          details: "Customer controls monitoring ON/OFF in MyEROAD portal",
-          status: "critical-gap",
-          subSteps: [
-            "Customer receives notification from EROAD (assumed)",
-            "Customer manually toggles monitoring ON in MyEROAD",
-            "⚠️ Welfare First has ZERO visibility on this action",
-            "⚠️ No timestamp captured for billing alignment",
-            "⚠️ Customer may turn OFF monitoring without notification"
-          ],
-          dependencies: ["WF notifies live", "EROAD notifies customer (assumed)"],
-          currentState: "❌ COMPLETE BLIND SPOT - No API, no notification, no visibility",
-          idealState: "🎯 EROAD sends automated webhook/notification when monitoring toggled ON/OFF with timestamp + vehicle list",
-          gap: "BILLING MISALIGNMENT RISK - WF bills from go-live date, but actual monitoring activation date unknown",
-          impact: "High - Affects billing accuracy, customer satisfaction, operational transparency"
+          currentState: "No visibility on what happens next",
+          idealState: "Auto-notification with CC to WF",
+          gap: "Communication breakdown after this point"
         },
         monitoring: {
-          title: "Active Monitoring",
-          type: "process",
-          details: "Welfare First monitors vehicles and manages alerts",
-          status: "current",
+          title: "🚨 Monitoring Activation",
+          details: "Customer toggles monitoring in MyEROAD",
+          status: "critical-gap",
           subSteps: [
-            "Monitor vehicles via API data",
-            "Access fatigue alert footage in MyEROAD portal",
-            "Manage escalations via contacts from onboarding form"
+            "Customer receives notification (assumed)",
+            "Customer toggles monitoring ON",
+            "⚠️ WF has ZERO visibility",
+            "⚠️ No timestamp captured",
+            "⚠️ May turn OFF without notification"
           ],
-          dependencies: ["Monitoring activated by customer"],
-          currentState: "✅ Operational - but no visibility on customer's monitoring status",
-          idealState: "Real-time monitoring status visible in WF dashboard"
+          dependencies: ["WF notifies live"],
+          currentState: "❌ COMPLETE BLIND SPOT",
+          idealState: "🎯 Webhook when toggled ON/OFF with timestamp",
+          gap: "BILLING MISALIGNMENT RISK",
+          impact: "High - billing accuracy, customer satisfaction"
         },
-        offboardRequest: {
-          title: "Offboarding Request",
-          type: "process",
-          details: "Customer requests vehicle or account offboarding",
+        active: {
+          title: "Active Monitoring",
+          details: "Welfare First monitors vehicles",
           status: "current",
           subSteps: [
-            "Customer emails Welfare First (current)",
-            "Future: Customer uses Change Manager Portal (under security assessment)"
+            "Monitor vehicles via API",
+            "Access fatigue alerts",
+            "Manage escalations"
           ],
-          dependencies: ["Customer decision to offboard"],
+          dependencies: ["Monitoring activated"],
+          currentState: "✅ Operational",
+          idealState: "Real-time monitoring status visible"
+        },
+        offboard: {
+          title: "Offboarding Request",
+          details: "Customer requests offboarding",
+          status: "current",
+          subSteps: [
+            "Customer emails WF (current)",
+            "Future: Change Manager Portal"
+          ],
+          dependencies: ["Customer decision"],
           currentState: "Manual email request",
-          idealState: "Change Manager Portal with automated workflow"
+          idealState: "Automated portal workflow"
         },
         wfOffboard: {
-          title: "Welfare First Offboards",
-          type: "process",
-          details: "Welfare First removes vehicle/account from system",
+          title: "WF Offboards",
+          details: "Welfare First removes vehicle/account",
           status: "critical-gap",
           subSteps: [
             "Receive offboarding request",
-            "Remove vehicle from WF system (or delete entire account)",
-            "⚠️ EROAD not automatically notified"
+            "Remove from WF system",
+            "⚠️ EROAD not notified"
           ],
-          dependencies: ["Offboarding request received"],
-          currentState: "❌ GAP: No automatic notification to EROAD",
-          idealState: "🎯 Automated notification to EROAD with offboard date for billing alignment",
-          gap: "EROAD continues billing after WF offboards"
+          dependencies: ["Offboard request"],
+          currentState: "❌ No automatic notification",
+          idealState: "🎯 Auto-notify EROAD with timestamp",
+          gap: "EROAD continues billing"
         },
-        billingMisalignment: {
-          title: "🚨 CRITICAL GAP: Billing Misalignment",
-          type: "gap",
-          details: "EROAD continues billing after Welfare First offboards",
+        billing: {
+          title: "🚨 Billing Misalignment",
+          details: "EROAD continues billing after WF offboards",
           status: "critical-gap",
           subSteps: [
-            "WF offboards vehicle/customer",
-            "EROAD unaware of offboarding",
-            "EROAD continues billing customer",
-            "Manual reconciliation required for prorata billing",
-            "Date misalignment between WF and EROAD"
+            "WF offboards vehicle",
+            "EROAD unaware",
+            "EROAD continues billing",
+            "Manual reconciliation required"
           ],
-          dependencies: ["Offboarding process"],
-          currentState: "❌ Manual reconciliation, billing disputes risk",
-          idealState: "🎯 Automated sync: WF offboarding triggers EROAD billing stop with exact timestamp",
-          impact: "High - Financial reconciliation, customer disputes, operational overhead"
+          dependencies: ["Offboarding"],
+          currentState: "❌ Manual reconciliation, disputes",
+          idealState: "🎯 Auto-sync triggers billing stop",
+          impact: "High - financial reconciliation overhead"
         }
       };
 
-      const getStatusIcon = (status) => {
-        switch(status) {
-          case 'trigger': return <Zap className="w-5 h-5 text-blue-600" />;
-          case 'current': return <CheckCircle className="w-5 h-5 text-emerald-500" />;
-          case 'warning': return <AlertCircle className="w-5 h-5 text-amber-500" />;
-          case 'critical-gap': return <XCircle className="w-5 h-5 text-rose-500" />;
-          default: return <Info className="w-5 h-5 text-slate-500" />;
-        }
+      const getIcon = (status) => {
+        const icons = {
+          trigger: <Zap className="w-5 h-5 text-blue-600" />,
+          current: <CheckCircle className="w-5 h-5 text-emerald-500" />,
+          warning: <AlertCircle className="w-5 h-5 text-amber-500" />,
+          'critical-gap': <XCircle className="w-5 h-5 text-rose-500" />
+        };
+        return icons[status] || <Info className="w-5 h-5 text-slate-500" />;
       };
 
-      const getNodeStyle = (status) => {
+      const getStyle = (status) => {
         const base = "transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer";
-        switch(status) {
-          case 'trigger': 
-            return `${base} bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/50`;
-          case 'current': 
-            return `${base} bg-white border-2 border-emerald-400 shadow-md hover:border-emerald-500`;
-          case 'warning': 
-            return `${base} bg-white border-2 border-amber-400 shadow-md hover:border-amber-500`;
-          case 'critical-gap': 
-            return `${base} bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-lg shadow-rose-500/50`;
-          default: 
-            return `${base} bg-white border-2 border-slate-300 shadow-md`;
-        }
+        const styles = {
+          trigger: `${base} bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg`,
+          current: `${base} bg-white border-2 border-emerald-400 shadow-md`,
+          warning: `${base} bg-white border-2 border-amber-400 shadow-md`,
+          'critical-gap': `${base} bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-lg`
+        };
+        return styles[status] || `${base} bg-white border-2 border-slate-300`;
       };
 
-      const FlowNode = ({ id, title, status, x, y, width = 240 }) => (
+      const Node = ({ id, title, status, x, y, w = 240 }) => (
         <div 
-          className={`absolute ${getNodeStyle(status)} rounded-xl p-4`}
-          style={{ left: x, top: y, width }}
+          className={`absolute ${getStyle(status)} rounded-xl p-4`}
+          style={{ left: x, top: y, width: w }}
           onClick={() => setSelectedNode(id)}
         >
           <div className="flex items-start gap-3">
-            <div className="mt-0.5">{getStatusIcon(status)}</div>
-            <div className="flex-1">
-              <h3 className={`font-semibold text-sm leading-tight ${status === 'trigger' || status === 'critical-gap' ? 'text-white' : 'text-slate-800'}`}>
-                {title}
-              </h3>
-            </div>
+            <div className="mt-0.5">{getIcon(status)}</div>
+            <h3 className={`font-semibold text-sm leading-tight ${status === 'trigger' || status === 'critical-gap' ? 'text-white' : 'text-slate-800'}`}>
+              {title}
+            </h3>
           </div>
         </div>
       );
 
-      const VerticalLine = ({ x, y1, y2, color = "slate", dashed = false }) => {
-        const colorMap = {
-          slate: '#cbd5e1',
-          blue: '#60a5fa',
-          amber: '#fbbf24',
-          rose: '#f43f5e'
-        };
-        
+      const Line = ({ x1, y1, x2, y2, color = "slate", dash = false }) => {
+        const colors = { slate: '#cbd5e1', blue: '#60a5fa', amber: '#fbbf24', rose: '#f43f5e', emerald: '#10b981' };
+        const isVertical = x1 === x2;
         return (
           <div 
             className="absolute"
-            style={{ 
-              left: x - 1, 
-              top: y1, 
-              width: 2, 
-              height: y2 - y1,
-              backgroundColor: dashed ? 'transparent' : colorMap[color],
-              backgroundImage: dashed ? `repeating-linear-gradient(to bottom, ${colorMap[color]} 0, ${colorMap[color]} 4px, transparent 4px, transparent 8px)` : 'none'
+            style={{
+              left: isVertical ? x1 - 1 : x1,
+              top: isVertical ? y1 : y1 - 1,
+              width: isVertical ? 2 : x2 - x1,
+              height: isVertical ? y2 - y1 : 2,
+              backgroundColor: dash ? 'transparent' : colors[color],
+              backgroundImage: dash ? (isVertical ? 
+                `repeating-linear-gradient(to bottom, ${colors[color]} 0, ${colors[color]} 4px, transparent 4px, transparent 8px)` :
+                `repeating-linear-gradient(to right, ${colors[color]} 0, ${colors[color]} 4px, transparent 4px, transparent 8px)`) : 'none'
             }}
           />
         );
       };
 
-      const HorizontalLine = ({ x1, x2, y, color = "slate", dashed = false }) => {
-        const colorMap = {
-          slate: '#cbd5e1',
-          blue: '#60a5fa',
-          amber: '#fbbf24',
-          rose: '#f43f5e'
-        };
-        
-        return (
-          <div 
-            className="absolute"
-            style={{ 
-              left: x1, 
-              top: y - 1, 
-              width: x2 - x1, 
-              height: 2,
-              backgroundColor: dashed ? 'transparent' : colorMap[color],
-              backgroundImage: dashed ? `repeating-linear-gradient(to right, ${colorMap[color]} 0, ${colorMap[color]} 4px, transparent 4px, transparent 8px)` : 'none'
-            }}
-          />
-        );
-      };
-
-      const Arrow = ({ x, y, direction = "down", color = "slate" }) => {
-        const colorMap = {
-          slate: '#94a3b8',
-          blue: '#60a5fa',
-          amber: '#fbbf24',
-          rose: '#f43f5e'
-        };
-        
+      const Arrow = ({ x, y, color = "slate" }) => {
+        const colors = { slate: '#94a3b8', blue: '#60a5fa', amber: '#fbbf24', rose: '#f43f5e', emerald: '#10b981' };
         return (
           <div 
             className="absolute w-0 h-0"
             style={{
-              left: direction === "down" ? x - 4 : x,
+              left: x - 4,
               top: y,
-              borderLeft: direction === "down" ? '4px solid transparent' : '0',
-              borderRight: direction === "down" ? '4px solid transparent' : '0',
-              borderTop: direction === "down" ? `8px solid ${colorMap[color]}` : '0'
+              borderLeft: '4px solid transparent',
+              borderRight: '4px solid transparent',
+              borderTop: `8px solid ${colors[color]}`
             }}
           />
         );
       };
 
-      const centerX = 450;
-      const leftX = 120;
-      const rightX = 780;
+      const cx = 450, lx = 120, rx = 780;
 
       return (
         <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-          {/* Modern Header */}
+          {/* Header */}
           <div className="sticky top-0 bg-white/80 backdrop-blur-lg border-b border-slate-200 shadow-sm z-50">
-            <div className="max-w-7xl mx-auto px-6 py-5">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                    EROAD → Welfare First
-                  </h1>
-                  <p className="text-slate-600 text-sm mt-1">Customer Onboarding Process Flow</p>
-                </div>
-                <button
-                  onClick={() => setShowIdealState(!showIdealState)}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
-                >
-                  {showIdealState ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  <span className="font-medium">{showIdealState ? 'Current State' : 'Show Ideal State'}</span>
-                </button>
+            <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                  EROAD → Welfare First
+                </h1>
+                <p className="text-slate-600 text-sm mt-1">Customer Onboarding Process Flow</p>
               </div>
+              <button
+                onClick={() => setShowIdealState(!showIdealState)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md"
+              >
+                {showIdealState ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span className="font-medium">{showIdealState ? 'Current State' : 'Show Ideal State'}</span>
+              </button>
             </div>
           </div>
 
-          {/* Minimalist Legend */}
+          {/* Legend */}
           <div className="max-w-7xl mx-auto px-6 mt-6">
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
               <div className="flex flex-wrap items-center gap-6 text-sm">
@@ -405,154 +393,159 @@
                   <XCircle className="w-4 h-4 text-rose-500" />
                   <span className="text-slate-700 font-medium">Critical Gap</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <Database className="w-4 h-4 text-emerald-600" />
+                  <span className="text-slate-700 font-medium">API Integration</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Main Flow Canvas */}
+          {/* Flowchart */}
           <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-12 relative overflow-hidden" style={{ minHeight: '1600px' }}>
+            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-12 relative" style={{ minHeight: '1500px' }}>
               
-              {/* Background Grid */}
+              {/* Grid Background */}
               <div className="absolute inset-0 opacity-30 pointer-events-none" style={{
                 backgroundImage: 'radial-gradient(circle, #e2e8f0 1px, transparent 1px)',
                 backgroundSize: '30px 30px'
               }} />
 
-              {/* Flow Nodes */}
-              <FlowNode id="signup" title="New Customer Signs Up" status="trigger" x={centerX - 120} y={20} />
+              {/* Nodes */}
+              <Node id="signup" title="New Customer Signs Up" status="trigger" x={cx-120} y={20} />
               
-              {/* Vertical line from trigger */}
-              <VerticalLine x={centerX} y1={80} y2={120} color="blue" />
-              <Arrow x={centerX} y={120} color="blue" />
+              <Line x1={cx} y1={80} x2={cx} y2={120} color="blue" />
+              <Arrow x={cx} y={120} color="blue" />
               
-              <FlowNode id="parallel" title="EROAD Sales Ops - Parallel Actions" status="current" x={centerX - 120} y={130} />
+              <Node id="parallel" title="EROAD Sales Ops - Parallel Actions" status="current" x={cx-120} y={130} />
               
-              {/* Three parallel branches */}
-              <VerticalLine x={centerX} y1={190} y2={220} />
-              <HorizontalLine x1={leftX + 120} x2={rightX + 120} y={220} />
-              <VerticalLine x={leftX + 120} y1={220} y2={260} />
-              <VerticalLine x={centerX} y1={220} y2={260} />
-              <VerticalLine x={rightX + 120} y1={220} y2={260} />
-              <Arrow x={leftX + 120} y={260} />
-              <Arrow x={centerX} y={260} />
-              <Arrow x={rightX + 120} y={260} />
+              <Line x1={cx} y1={190} x2={cx} y2={220} />
+              <Line x1={lx+120} y1={220} x2={rx+120} y2={220} />
+              <Line x1={lx+120} y1={220} x2={lx+120} y2={260} />
+              <Line x1={cx} y1={220} x2={cx} y2={260} />
+              <Line x1={rx+120} y1={220} x2={rx+120} y2={260} />
+              <Arrow x={lx+120} y={260} />
+              <Arrow x={cx} y={260} />
+              <Arrow x={rx+120} y={260} />
               
-              <FlowNode id="myeroad" title="MyEROAD Portal Access" status="current" x={leftX} y={270} />
-              <FlowNode id="apiVault" title="API Key Retrieval" status="current" x={centerX - 120} y={270} />
-              <FlowNode id="customerForm" title="Customer Onboarding Form" status="current" x={rightX} y={270} />
+              <Node id="myeroad" title="MyEROAD Portal Access" status="current" x={lx} y={270} />
+              <Node id="apiVault" title="API Key Retrieval" status="current" x={cx-120} y={270} />
+              <Node id="customerForm" title="Customer Onboarding Form" status="current" x={rx} y={270} />
               
-              {/* Lines to WF Setup */}
-              <VerticalLine x={leftX + 120} y1={350} y2={410} dashed={true} color="amber" />
-              <VerticalLine x={centerX} y1={350} y2={410} dashed={true} color="amber" />
-              <VerticalLine x={rightX + 120} y1={350} y2={410} dashed={true} color="amber" />
-              <HorizontalLine x1={leftX + 120} x2={rightX + 120} y={410} dashed={true} color="amber" />
-              <VerticalLine x={centerX} y1={410} y2={450} dashed={true} color="amber" />
-              <Arrow x={centerX} y={450} color="amber" />
+              <Line x1={lx+120} y1={350} x2={lx+120} y2={410} dash color="amber" />
+              <Line x1={cx} y1={350} x2={cx} y2={410} dash color="amber" />
+              <Line x1={rx+120} y1={350} x2={rx+120} y2={410} dash color="amber" />
+              <Line x1={lx+120} y1={410} x2={rx+120} y2={410} dash color="amber" />
+              <Line x1={cx} y1={410} x2={cx} y2={450} dash color="amber" />
+              <Arrow x={cx} y={450} color="amber" />
               
-              <FlowNode id="wfSetup" title="Welfare First Setup (Excel Tracking)" status="warning" x={centerX - 120} y={460} />
+              <Node id="wfSetup" title="Welfare First Setup & Configuration" status="warning" x={cx-120} y={460} />
               
-              <VerticalLine x={centerX} y1={540} y2={580} />
-              <Arrow x={centerX} y={580} />
+              {/* API Integration Highlight */}
+              <div 
+                className="absolute api-highlight bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-400 rounded-lg p-3"
+                style={{ left: cx+150, top: 465, width: 200 }}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Database className="w-4 h-4 text-emerald-600" />
+                  <span className="text-xs font-bold text-emerald-900">Step 3: API Integration</span>
+                </div>
+                <div className="text-xs text-emerald-800">Critical sub-process within WF Setup</div>
+              </div>
               
-              <FlowNode id="apiIntegration" title="API Integration & Verification" status="current" x={centerX - 120} y={590} />
-              <FlowNode id="apiIntegration" title="API Integration & Verification" status="current" x={centerX - 120} y={590} />
+              <Line x1={cx+120} y1={490} x2={cx+150} y2={490} color="emerald" />
               
-              <VerticalLine x={centerX} y1={670} y2={710} />
-              <Arrow x={centerX} y={710} />
+              <Line x1={cx} y1={540} x2={cx} y2={580} />
+              <Arrow x={cx} y={580} />
               
-              <FlowNode id="wfLiveEmail" title="WF Notifies 'Live' to Sales Ops" status="warning" x={centerX - 120} y={720} />
-              <FlowNode id="wfLiveEmail" title="WF Notifies 'Live' to Sales Ops" status="warning" x={centerX - 120} y={720} />
+              <Node id="wfLive" title="WF Notifies 'Live'" status="warning" x={cx-120} y={590} />
               
-              <VerticalLine x={centerX} y1={800} y2={840} color="rose" dashed={true} />
-              <Arrow x={centerX} y={840} color="rose" />
+              <Line x1={cx} y1={670} x2={cx} y2={710} dash color="rose" />
+              <Arrow x={cx} y={710} color="rose" />
               
-              <FlowNode id="monitoringActivation" title="🚨 Monitoring Activation (Customer)" status="critical-gap" x={centerX - 120} y={850} width={240} />
-              <FlowNode id="monitoringActivation" title="🚨 Monitoring Activation (Customer)" status="critical-gap" x={centerX - 120} y={850} width={240} />
+              <Node id="monitoring" title="🚨 Monitoring Activation" status="critical-gap" x={cx-120} y={720} />
               
-              <VerticalLine x={centerX} y1={930} y2={970} color="rose" dashed={true} />
-              <Arrow x={centerX} y={970} color="rose" />
+              <Line x1={cx} y1={800} x2={cx} y2={840} dash color="rose" />
+              <Arrow x={cx} y={840} color="rose" />
               
-              <FlowNode id="monitoring" title="Active Monitoring" status="current" x={centerX - 120} y={980} />
+              <Node id="active" title="Active Monitoring" status="current" x={cx-120} y={850} />
               
-              <VerticalLine x={centerX} y1={1060} y2={1100} />
-              <Arrow x={centerX} y={1100} />
+              <Line x1={cx} y1={930} x2={cx} y2={970} />
+              <Arrow x={cx} y={970} />
               
-              <FlowNode id="offboardRequest" title="Offboarding Request" status="current" x={centerX - 120} y={1110} />
+              <Node id="offboard" title="Offboarding Request" status="current" x={cx-120} y={980} />
               
-              <VerticalLine x={centerX} y1={1190} y2={1230} color="rose" />
-              <Arrow x={centerX} y={1230} color="rose" />
+              <Line x1={cx} y1={1060} x2={cx} y2={1100} color="rose" />
+              <Arrow x={cx} y={1100} color="rose" />
               
-              <FlowNode id="wfOffboard" title="Welfare First Offboards" status="critical-gap" x={centerX - 120} y={1240} />
+              <Node id="wfOffboard" title="WF Offboards" status="critical-gap" x={cx-120} y={1110} />
               
-              <VerticalLine x={centerX} y1={1320} y2={1350} color="rose" />
-              <HorizontalLine x1={centerX} x2={rightX + 60} y={1350} color="rose" />
-              <VerticalLine x={rightX + 60} y1={1350} y2={1390} color="rose" />
-              <Arrow x={rightX + 60} y={1390} color="rose" />
+              <Line x1={cx} y1={1190} x2={cx} y2={1220} color="rose" />
+              <Line x1={cx} y1={1220} x2={rx+60} y2={1220} color="rose" />
+              <Line x1={rx+60} y1={1220} x2={rx+60} y2={1260} color="rose" />
+              <Arrow x={rx+60} y={1260} color="rose" />
               
-              <FlowNode id="billingMisalignment" title="🚨 Billing Misalignment" status="critical-gap" x={rightX - 60} y={1400} width={240} />
+              <Node id="billing" title="🚨 Billing Misalignment" status="critical-gap" x={rx-60} y={1270} />
 
             </div>
           </div>
 
-          {/* Ideal State Overlay */}
+          {/* Ideal State Modal */}
           {showIdealState && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
               <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full my-8">
-                <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex justify-between items-center rounded-t-2xl z-10">
+                <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5 flex justify-between items-center rounded-t-2xl">
                   <div>
-                    <h2 className="font-bold text-xl md:text-2xl">🎯 Ideal State Vision</h2>
-                    <p className="text-blue-100 text-xs md:text-sm mt-1">Fully automated, connected workflow</p>
+                    <h2 className="font-bold text-2xl">🎯 Ideal State Vision</h2>
+                    <p className="text-blue-100 text-sm mt-1">Fully automated, connected workflow</p>
                   </div>
                   <button 
                     onClick={() => setShowIdealState(false)} 
-                    className="text-white/80 hover:text-white text-3xl leading-none hover:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center transition-all"
-                  >
-                    ×
-                  </button>
+                    className="text-white text-3xl leading-none hover:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center"
+                  >×</button>
                 </div>
                 
-                <div className="p-6 md:p-8 space-y-5 max-h-[calc(90vh-80px)] overflow-y-auto">
+                <div className="p-8 space-y-5 max-h-[calc(90vh-80px)] overflow-y-auto">
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border-2 border-blue-200">
-                    <h3 className="font-bold text-blue-900 text-base md:text-lg mb-3">🚀 Automated Workflow Vision</h3>
-                    <p className="text-blue-800 leading-relaxed text-sm md:text-base">
+                    <h3 className="font-bold text-blue-900 text-lg mb-3">🚀 Automated Workflow Vision</h3>
+                    <p className="text-blue-800 leading-relaxed text-sm">
                       A fully integrated system that tracks progress from account creation to monitoring activation, 
                       with real-time status updates, automated notifications, and complete billing alignment.
                     </p>
                   </div>
 
                   <div className="grid gap-4">
-                    <div className="bg-white border-2 border-emerald-200 rounded-xl p-4 md:p-5">
-                      <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2 text-sm md:text-base">
-                        <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                    <div className="bg-white border-2 border-emerald-200 rounded-xl p-5">
+                      <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5" />
                         1. Automated Account Provisioning
                       </h4>
-                      <ul className="text-xs md:text-sm text-slate-700 space-y-1.5 ml-7">
+                      <ul className="text-sm text-slate-700 space-y-1.5 ml-7">
                         <li>• MyEROAD account auto-created with first login confirmation webhook</li>
                         <li>• API keys auto-generated with extended validity and rotation alerts</li>
                         <li>• Onboarding form with mandatory field validation before submission</li>
                       </ul>
                     </div>
 
-                    <div className="bg-white border-2 border-blue-200 rounded-xl p-4 md:p-5">
-                      <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2 text-sm md:text-base">
-                        <Zap className="w-5 h-5 flex-shrink-0" />
+                    <div className="bg-white border-2 border-blue-200 rounded-xl p-5">
+                      <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                        <Zap className="w-5 h-5" />
                         2. Real-Time Integration Status Dashboard
                       </h4>
-                      <ul className="text-xs md:text-sm text-slate-700 space-y-1.5 ml-7">
+                      <ul className="text-sm text-slate-700 space-y-1.5 ml-7">
                         <li>• Live status tracking: MyEROAD access, API integration, form submission</li>
                         <li>• Completion percentage visible to both WF and EROAD</li>
                         <li>• Automated alerts for incomplete steps or errors</li>
-                        <li>• Replace Excel with centralized onboarding management tool</li>
+                        <li>• Replace manual tracking with centralized onboarding management tool</li>
                       </ul>
                     </div>
 
-                    <div className="bg-white border-2 border-amber-200 rounded-xl p-4 md:p-5">
-                      <h4 className="font-semibold text-amber-900 mb-3 flex items-center gap-2 text-sm md:text-base">
-                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <div className="bg-white border-2 border-amber-200 rounded-xl p-5">
+                      <h4 className="font-semibold text-amber-900 mb-3 flex items-center gap-2">
+                        <AlertCircle className="w-5 h-5" />
                         3. Monitoring Activation Visibility (CRITICAL)
                       </h4>
-                      <ul className="text-xs md:text-sm text-slate-700 space-y-1.5 ml-7">
+                      <ul className="text-sm text-slate-700 space-y-1.5 ml-7">
                         <li>• <strong>Webhook notification</strong> when customer toggles monitoring ON/OFF</li>
                         <li>• Payload includes: timestamp, vehicle list, monitoring status</li>
                         <li>• Visible in WF dashboard with exact activation date/time</li>
@@ -560,12 +553,12 @@
                       </ul>
                     </div>
 
-                    <div className="bg-white border-2 border-rose-200 rounded-xl p-4 md:p-5">
-                      <h4 className="font-semibold text-rose-900 mb-3 flex items-center gap-2 text-sm md:text-base">
-                        <XCircle className="w-5 h-5 flex-shrink-0" />
+                    <div className="bg-white border-2 border-rose-200 rounded-xl p-5">
+                      <h4 className="font-semibold text-rose-900 mb-3 flex items-center gap-2">
+                        <XCircle className="w-5 h-5" />
                         4. Offboarding Synchronization (CRITICAL)
                       </h4>
-                      <ul className="text-xs md:text-sm text-slate-700 space-y-1.5 ml-7">
+                      <ul className="text-sm text-slate-700 space-y-1.5 ml-7">
                         <li>• WF offboarding triggers automatic notification to EROAD</li>
                         <li>• EROAD billing system updated with exact offboard timestamp</li>
                         <li>• Customer Change Manager Portal integration (when ready)</li>
@@ -573,12 +566,12 @@
                       </ul>
                     </div>
 
-                    <div className="bg-white border-2 border-indigo-200 rounded-xl p-4 md:p-5">
-                      <h4 className="font-semibold text-indigo-900 mb-3 flex items-center gap-2 text-sm md:text-base">
-                        <Info className="w-5 h-5 flex-shrink-0" />
+                    <div className="bg-white border-2 border-indigo-200 rounded-xl p-5">
+                      <h4 className="font-semibold text-indigo-900 mb-3 flex items-center gap-2">
+                        <Info className="w-5 h-5" />
                         5. Complete Communication Loop
                       </h4>
-                      <ul className="text-xs md:text-sm text-slate-700 space-y-1.5 ml-7">
+                      <ul className="text-sm text-slate-700 space-y-1.5 ml-7">
                         <li>• All customer notifications CC Welfare First</li>
                         <li>• Automated confirmation when customer receives monitoring instructions</li>
                         <li>• Shared view of customer journey between EROAD and WF</li>
@@ -587,9 +580,9 @@
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-5 md:p-6 border-2 border-emerald-300">
-                    <h3 className="font-bold text-emerald-900 text-base md:text-lg mb-3">✅ Expected Outcomes</h3>
-                    <div className="grid md:grid-cols-2 gap-4 text-xs md:text-sm">
+                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border-2 border-emerald-300">
+                    <h3 className="font-bold text-emerald-900 text-lg mb-3">✅ Expected Outcomes</h3>
+                    <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <div className="font-semibold text-emerald-800 mb-2">Operational Benefits</div>
                         <ul className="text-slate-700 space-y-1">
@@ -615,34 +608,27 @@
             </div>
           )}
 
-          {/* Side Detail Panel */}
-          {selectedNode && (
-            <div className="fixed right-0 top-0 h-full w-[420px] bg-white shadow-2xl z-50 border-l border-slate-200 overflow-y-auto">
+          {/* Detail Panel */}
+          {selectedNode && nodeData[selectedNode] && (
+            <div className="fixed right-0 top-0 h-full w-[420px] bg-white shadow-2xl z-50 border-l overflow-y-auto">
               <div className="sticky top-0 bg-gradient-to-r from-slate-800 to-slate-700 text-white p-6 flex justify-between items-center">
                 <h2 className="font-bold text-lg">Process Details</h2>
-                <button 
-                  onClick={() => setSelectedNode(null)} 
-                  className="text-white/80 hover:text-white text-2xl leading-none"
-                >
-                  ×
-                </button>
+                <button onClick={() => setSelectedNode(null)} className="text-white text-2xl">×</button>
               </div>
               
               <div className="p-6 space-y-6">
                 <div className="flex items-center gap-3">
-                  {getStatusIcon(nodeDetails[selectedNode].status)}
-                  <h3 className="font-bold text-xl text-slate-800">{nodeDetails[selectedNode].title}</h3>
+                  {getIcon(nodeData[selectedNode].status)}
+                  <h3 className="font-bold text-xl text-slate-800">{nodeData[selectedNode].title}</h3>
                 </div>
 
-                <div className="text-slate-700 leading-relaxed">
-                  {nodeDetails[selectedNode].details}
-                </div>
+                <div className="text-slate-700 leading-relaxed">{nodeData[selectedNode].details}</div>
 
-                {nodeDetails[selectedNode].subSteps && (
-                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                {nodeData[selectedNode].subSteps && (
+                  <div className="bg-slate-50 rounded-lg p-4 border">
                     <h4 className="font-semibold text-slate-800 mb-3">Process Steps</h4>
                     <div className="space-y-2">
-                      {nodeDetails[selectedNode].subSteps.map((step, i) => (
+                      {nodeData[selectedNode].subSteps.map((step, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm text-slate-700">
                           <ChevronRight className="w-4 h-4 mt-0.5 text-slate-400 flex-shrink-0" />
                           <span>{step}</span>
@@ -652,40 +638,53 @@
                   </div>
                 )}
 
-                {nodeDetails[selectedNode].excelStatuses && (
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-3">Excel Tracking Fields</h4>
-                    <div className="space-y-1.5">
-                      {nodeDetails[selectedNode].excelStatuses.map((status, i) => (
-                        <div key={i} className="text-sm text-blue-800">• {status}</div>
+                {nodeData[selectedNode].apiDetails && (
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-5 border-2 border-emerald-300">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Database className="w-5 h-5 text-emerald-700" />
+                      <h4 className="font-semibold text-emerald-900">API Integration & Verification</h4>
+                    </div>
+                    <p className="text-sm text-emerald-800 mb-3">{nodeData[selectedNode].apiDetails.desc}</p>
+                    
+                    <div className="mb-3">
+                      <div className="text-xs font-semibold text-emerald-900 mb-2">Verification Process:</div>
+                      {nodeData[selectedNode].apiDetails.steps.map((step, i) => (
+                        <div key={i} className="text-xs text-emerald-800 mb-1">{step}</div>
+                      ))}
+                    </div>
+
+                    <div className="bg-white/60 rounded p-3 border border-emerald-200">
+                      <div className="text-xs font-semibold text-rose-900 mb-2">Potential Failures:</div>
+                      {nodeData[selectedNode].apiDetails.failures.map((failure, i) => (
+                        <div key={i} className="text-xs text-rose-800 mb-1">❌ {failure}</div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {nodeDetails[selectedNode].failures && (
+                {nodeData[selectedNode].failures && (
                   <div className="bg-rose-50 rounded-lg p-4 border border-rose-200">
                     <h4 className="font-semibold text-rose-900 mb-3">Failure Scenarios</h4>
                     <div className="space-y-2">
-                      {nodeDetails[selectedNode].failures.map((failure, i) => (
+                      {nodeData[selectedNode].failures.map((failure, i) => (
                         <div key={i} className="text-sm text-rose-800">⚠️ {failure}</div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {nodeDetails[selectedNode].blocking && (
+                {nodeData[selectedNode].blocking && (
                   <div className="bg-rose-100 rounded-lg p-4 border-2 border-rose-400">
                     <h4 className="font-semibold text-rose-900 mb-2">⛔ Blocking Issues</h4>
-                    <p className="text-sm text-rose-800">{nodeDetails[selectedNode].blocking}</p>
+                    <p className="text-sm text-rose-800">{nodeData[selectedNode].blocking}</p>
                   </div>
                 )}
 
-                {nodeDetails[selectedNode].dependencies.length > 0 && (
+                {nodeData[selectedNode].dependencies && nodeData[selectedNode].dependencies.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-slate-800 mb-2">Dependencies</h4>
                     <div className="space-y-1.5">
-                      {nodeDetails[selectedNode].dependencies.map((dep, i) => (
+                      {nodeData[selectedNode].dependencies.map((dep, i) => (
                         <div key={i} className="text-sm text-slate-600 flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                           {dep}
@@ -695,42 +694,42 @@
                   </div>
                 )}
 
-                <div className="border-t border-slate-200 pt-6 space-y-4">
+                <div className="border-t pt-6 space-y-4">
                   <div>
                     <h4 className="font-semibold text-emerald-700 mb-2 flex items-center gap-2">
                       <CheckCircle className="w-4 h-4" />
                       Current State
                     </h4>
-                    <p className="text-sm text-slate-700 leading-relaxed">{nodeDetails[selectedNode].currentState}</p>
+                    <p className="text-sm text-slate-700 leading-relaxed">{nodeData[selectedNode].currentState}</p>
                   </div>
                   
-                  <div className={nodeDetails[selectedNode].idealState.includes('🎯') ? 'bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200' : ''}>
+                  <div className={nodeData[selectedNode].idealState.includes('🎯') ? 'bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200' : ''}>
                     <h4 className="font-semibold text-blue-700 mb-2 flex items-center gap-2">
                       <Zap className="w-4 h-4" />
                       Ideal State
                     </h4>
-                    <p className="text-sm text-slate-700 leading-relaxed">{nodeDetails[selectedNode].idealState}</p>
+                    <p className="text-sm text-slate-700 leading-relaxed">{nodeData[selectedNode].idealState}</p>
                   </div>
                 </div>
 
-                {nodeDetails[selectedNode].gap && (
+                {nodeData[selectedNode].gap && (
                   <div className="bg-amber-50 border-l-4 border-amber-500 rounded-r-lg p-4">
                     <h4 className="font-semibold text-amber-900 mb-2">⚠️ Identified Gap</h4>
-                    <p className="text-sm text-amber-800 leading-relaxed">{nodeDetails[selectedNode].gap}</p>
+                    <p className="text-sm text-amber-800 leading-relaxed">{nodeData[selectedNode].gap}</p>
                   </div>
                 )}
 
-                {nodeDetails[selectedNode].impact && (
+                {nodeData[selectedNode].impact && (
                   <div className="bg-rose-50 border-l-4 border-rose-500 rounded-r-lg p-4">
                     <h4 className="font-semibold text-rose-900 mb-2">📊 Business Impact</h4>
-                    <p className="text-sm text-rose-800 leading-relaxed">{nodeDetails[selectedNode].impact}</p>
+                    <p className="text-sm text-rose-800 leading-relaxed">{nodeData[selectedNode].impact}</p>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Modern Summary Cards */}
+          {/* Summary Cards */}
           <div className="max-w-7xl mx-auto px-6 pb-8">
             <div className="grid grid-cols-3 gap-6">
               <div className="bg-gradient-to-br from-rose-50 to-rose-100 border-2 border-rose-300 rounded-xl p-6 shadow-lg">
@@ -754,9 +753,9 @@
                   Process Gaps (4)
                 </h3>
                 <div className="space-y-2 text-sm text-amber-800">
-                  <div>• No MyEROAD access confirmation</div>
-                  <div>• No automated form validation</div>
-                  <div>• Manual Excel tracking</div>
+                  <div>• No MyEROAD access confirmation loop</div>
+                  <div>• Customer can submit incomplete forms</div>
+                  <div>• Manual status tracking (no workflow tool)</div>
                   <div>• Lost visibility after "Live" notification</div>
                 </div>
               </div>
@@ -774,7 +773,7 @@
               </div>
             </div>
 
-            {/* Key Recommendations Card */}
+            {/* Recommendations */}
             <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-8 shadow-xl">
               <h3 className="font-bold text-blue-900 mb-6 text-2xl flex items-center gap-3">
                 <Zap className="w-6 h-6" />
@@ -782,32 +781,32 @@
               </h3>
               <div className="grid grid-cols-2 gap-6">
                 <div className="bg-white/70 rounded-lg p-5 border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-3 text-base">Priority 1: Monitoring Visibility</h4>
-                  <ul className="text-sm text-blue-800 space-y-2 leading-relaxed">
+                  <h4 className="font-semibold text-blue-900 mb-3">Priority 1: Monitoring Visibility</h4>
+                  <ul className="text-sm text-blue-800 space-y-2">
                     <li>• Request webhook/API when customer toggles monitoring ON/OFF</li>
                     <li>• Include timestamp + vehicle list in notification</li>
                     <li>• Enables accurate billing alignment</li>
                   </ul>
                 </div>
                 <div className="bg-white/70 rounded-lg p-5 border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-3 text-base">Priority 2: Offboarding Sync</h4>
-                  <ul className="text-sm text-blue-800 space-y-2 leading-relaxed">
+                  <h4 className="font-semibold text-blue-900 mb-3">Priority 2: Offboarding Sync</h4>
+                  <ul className="text-sm text-blue-800 space-y-2">
                     <li>• Automate notification from WF → EROAD on offboarding</li>
                     <li>• Or define process for WF to notify via EROAD portal</li>
                     <li>• Ensure billing stops on same date</li>
                   </ul>
                 </div>
                 <div className="bg-white/70 rounded-lg p-5 border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-3 text-base">Priority 3: Communication Loop</h4>
-                  <ul className="text-sm text-blue-800 space-y-2 leading-relaxed">
+                  <h4 className="font-semibold text-blue-900 mb-3">Priority 3: Communication Loop</h4>
+                  <ul className="text-sm text-blue-800 space-y-2">
                     <li>• CC Welfare First when notifying customer</li>
                     <li>• Close communication gap after "WF Live" email</li>
                     <li>• Confirm customer received monitoring instructions</li>
                   </ul>
                 </div>
                 <div className="bg-white/70 rounded-lg p-5 border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-3 text-base">Nice-to-Have: Automation</h4>
-                  <ul className="text-sm text-blue-800 space-y-2 leading-relaxed">
+                  <h4 className="font-semibold text-blue-900 mb-3">Nice-to-Have: Automation</h4>
+                  <ul className="text-sm text-blue-800 space-y-2">
                     <li>• Auto-confirmation of MyEROAD first login</li>
                     <li>• Extended vault link validity alerts</li>
                     <li>• Onboarding form validation</li>
@@ -820,8 +819,7 @@
       );
     };
 
-    ReactDOM.render(<OnboardingFlowchart />, document.getElementById('root'));
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
 </html>
-
